@@ -1,7 +1,7 @@
 // @ts-nocheck
 // <!--GAMFC-->version base on commit 43fad05dcdae3b723c53c226f8181fc5bd47223e, time is 2023-06-22 15:20:02 UTC<!--GAMFC-END-->.
 // @ts-ignore
-// https://github.com/bia-pain-bache/BPB-Worker-Panel
+// https://github.com/bia-pain-bache/🔒VIP-Worker-Panel
 
 import { connect } from 'cloudflare:sockets';
 
@@ -81,7 +81,7 @@ export default {
 
                     case '/panel':
 
-                        if (typeof env.bpb !== 'object') {
+                        if (typeof env.🔒VIP !== 'object') {
                             const errorPage = renderErrorPage('KV Dataset is not properly set!', null, true);
                             return new Response(errorPage, { status: 200, headers: {'Content-Type': 'text/html'}});
                         }
@@ -98,7 +98,7 @@ export default {
                         }
                         
                         if (!isAuth) return Response.redirect(`${url.origin}/login`, 302);
-                        const proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+                        const proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
                         const isUpdated = panelVersion === proxySettings?.panelVersion;
                         if (!proxySettings || !isUpdated) await updateDataset(env);
                         const fragConfs = await getFragmentConfigs(env, host, 'nekoray');
@@ -119,7 +119,7 @@ export default {
                                                       
                     case '/login':
 
-                        if (typeof env.bpb !== 'object') {
+                        if (typeof env.🔒VIP !== 'object') {
                             const errorPage = renderErrorPage('KV Dataset is not properly set!', null, true);
                             return new Response(errorPage, { status: 200, headers: {'Content-Type': 'text/html'}});
                         }
@@ -127,18 +127,18 @@ export default {
                         const loginAuth = await Authenticate(request, env);
                         if (loginAuth) return Response.redirect(`${url.origin}/panel`, 302);
 
-                        let secretKey = await env.bpb.get('secretKey');
-                        const pwd = await env.bpb.get('pwd');
-                        if (!pwd) await env.bpb.put('pwd', 'admin');
+                        let secretKey = await env.🔒VIP.get('secretKey');
+                        const pwd = await env.🔒VIP.get('pwd');
+                        if (!pwd) await env.🔒VIP.put('pwd', 'admin');
 
                         if (!secretKey) {
                             secretKey = generateSecretKey();
-                            await env.bpb.put('secretKey', secretKey);
+                            await env.🔒VIP.put('secretKey', secretKey);
                         }
 
                         if (request.method === 'POST') {
                             const password = await request.text();
-                            const savedPass = await env.bpb.get('pwd');
+                            const savedPass = await env.🔒VIP.get('pwd');
 
                             if (password === savedPass) {
                                 const jwtToken = generateJWTToken(secretKey, password);
@@ -186,9 +186,9 @@ export default {
                         let passAuth = await Authenticate(request, env);
                         if (!passAuth) return new Response('Unauthorized!', { status: 401 });           
                         const newPwd = await request.text();
-                        const oldPwd = await env.bpb.get('pwd');
+                        const oldPwd = await env.🔒VIP.get('pwd');
                         if (newPwd === oldPwd) return new Response('Please enter a new Password!', { status: 400 });
-                        await env.bpb.put('pwd', newPwd);
+                        await env.🔒VIP.put('pwd', newPwd);
 
                         return new Response('Success', {
                             status: 200,
@@ -782,7 +782,7 @@ const getNormalConfigs = async (env, hostName, client) => {
     let vlessWsTls = '';
 
     try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while getting normal configs - ${error}`);
@@ -825,18 +825,18 @@ const generateRemark = (index, port) => {
     switch (index) {
         case 0:
         case 1:
-            remark = `💦 BPB - Domain_${index + 1} : ${port}`;
+            remark = `💦 🔒VIP - Domain_${index + 1} : ${port}`;
             break;
         case 2:
         case 3:
-            remark = `💦 BPB - IPv4_${index - 1} : ${port}`;
+            remark = `💦 🔒VIP - IPv4_${index - 1} : ${port}`;
             break;
         case 4:
         case 5:
-            remark = `💦 BPB - IPv6_${index - 3} : ${port}`;
+            remark = `💦 🔒VIP - IPv6_${index - 3} : ${port}`;
             break;
         default:
-            remark = `💦 BPB - Clean IP_${index - 5} : ${port}`;
+            remark = `💦 🔒VIP - Clean IP_${index - 5} : ${port}`;
             break;
     }
 
@@ -947,7 +947,7 @@ const buildWorkerLessConfig = async (env, client) => {
     let proxySettings = {};
 
     try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while generating WorkerLess config - ${error}`);
@@ -968,7 +968,7 @@ const buildWorkerLessConfig = async (env, client) => {
     fakeOutbound.tag = 'fake-outbound';
 
     let fragConfig = structuredClone(xrayConfigTemp);
-    fragConfig.remarks  = '💦 BPB Frag - WorkerLess ⭐'
+    fragConfig.remarks  = '💦 🔒VIP Frag - WorkerLess ⭐'
     fragConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn, true);
     fragConfig.outbounds[0].settings.domainStrategy = 'UseIP';
     fragConfig.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
@@ -1003,7 +1003,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
                             '40-60', '50-70', '60-80', '70-90', '80-100', '100-200']
 
     try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while getting fragment configs - ${error}`);
@@ -1043,7 +1043,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
         } catch (error) {
             console.log('An error occured while parsing chain proxy: ', error);
             proxyOutbound = undefined;
-            await env.bpb.put("proxySettings", JSON.stringify({
+            await env.🔒VIP.put("proxySettings", JSON.stringify({
                 ...proxySettings, 
                 outProxy: '',
                 outProxyParams: ''}));
@@ -1110,7 +1110,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
     };
 
     let bestPing = structuredClone(xrayConfigTemp);
-    bestPing.remarks = '💦 BPB Frag - Best Ping 💥';
+    bestPing.remarks = '💦 🔒VIP Frag - Best Ping 💥';
     bestPing.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     bestPing.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
     bestPing.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
@@ -1131,7 +1131,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
     }
 
     let bestFragment = structuredClone(xrayConfigTemp);
-    bestFragment.remarks = '💦 BPB Frag - Best Fragment 😎';
+    bestFragment.remarks = '💦 🔒VIP Frag - Best Fragment 😎';
     bestFragment.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     bestFragment.outbounds.splice(0,1);
     bestFragValues.forEach( (fragLength, index) => {
@@ -1192,7 +1192,7 @@ const getSingboxConfig = async (env, hostName) => {
     let proxySettings = {};
     
     try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while getting sing-box configs - ${error}`);
@@ -1243,7 +1243,7 @@ const getWarpConfigs = async (env, client) => {
     let singboxWarpConfig = structuredClone(singboxConfigTemp);
     
     try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while getting fragment configs - ${error}`);
@@ -1261,7 +1261,7 @@ const getWarpConfigs = async (env, client) => {
     xrayWarpConfig.routing.rules[xrayWarpConfig.routing.rules.length - 1].outboundTag = 'warp';
     delete xrayWarpConfig.observatory;
     delete xrayWarpConfig.routing.balancers;
-    xrayWarpBestPing.remarks = '💦 BPB - Warp Best Ping 🚀'
+    xrayWarpBestPing.remarks = '💦 🔒VIP - Warp Best Ping 🚀'
     xrayWarpBestPing.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     xrayWarpBestPing.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, true);
     xrayWarpBestPing.outbounds.splice(0,1);
@@ -1276,7 +1276,7 @@ const getWarpConfigs = async (env, client) => {
     xrayWarpOutbounds.forEach((outbound, index) => {
         xrayWarpConfigs.push({
             ...xrayWarpConfig,
-            remarks: `💦 BPB - Warp ${index + 1} 🇮🇷`,
+            remarks: `💦 🔒VIP - Warp ${index + 1} 🇮🇷`,
             outbounds: [{...outbound, tag: 'warp'}, ...xrayWarpConfig.outbounds]
         });
     });
@@ -1284,7 +1284,7 @@ const getWarpConfigs = async (env, client) => {
     xrayWoWOutbounds.forEach((outbound, index) => {
         if (outbound.tag.includes('warp-out')) {
             let xrayWoWConfig = structuredClone(xrayWoWConfigTemp);
-            xrayWoWConfig.remarks = `💦 BPB - WoW ${index/2 + 1} 🌍`;
+            xrayWoWConfig.remarks = `💦 🔒VIP - WoW ${index/2 + 1} 🌍`;
             xrayWoWConfig.outbounds = [{...xrayWoWOutbounds[index]}, {...xrayWoWOutbounds[index + 1]}, ...xrayWoWConfig.outbounds];
             xrayWoWConfig.routing.rules[xrayWoWConfig.routing.rules.length - 1].outboundTag = outbound.tag;
             xrayWarpConfigs.push(xrayWoWConfig);
@@ -1577,7 +1577,7 @@ const updateDataset = async (env, Settings) => {
     let currentProxySettings = {};
 
     try {
-        currentProxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        currentProxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while getting current values - ${error}`);
@@ -1606,7 +1606,7 @@ const updateDataset = async (env, Settings) => {
     };
 
     try {    
-        await env.bpb.put("proxySettings", JSON.stringify(proxySettings));          
+        await env.🔒VIP.put("proxySettings", JSON.stringify(proxySettings));          
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while updating KV - ${error}`);
@@ -1684,7 +1684,7 @@ const generateSecretKey = () => {
 const Authenticate = async (request, env) => {
     
     try {
-        const secretKey = await env.bpb.get('secretKey');
+        const secretKey = await env.🔒VIP.get('secretKey');
         const cookie = request.headers.get('Cookie');
         const cookieMatch = cookie ? cookie.match(/(^|;\s*)jwtToken=([^;]*)/) : null;
         const token = cookieMatch ? cookieMatch.pop() : null;
@@ -1719,7 +1719,7 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
     let proxySettings = {};
     
     try {
-        proxySettings = await env.bpb.get("proxySettings", {type: 'json'});
+        proxySettings = await env.🔒VIP.get("proxySettings", {type: 'json'});
     } catch (error) {
         console.log(error);
         throw new Error(`An error occurred while rendering home page - ${error}`);
@@ -1794,7 +1794,7 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>BPB Panel ${panelVersion}</title>
+        <title>🔒VIP Panel ${panelVersion}</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 		<style>
@@ -2012,7 +2012,7 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
 	</head>
 	
 	<body>
-		<h1>BPB Panel <span style="font-size: smaller;">${panelVersion}</span> 💦</h1>
+		<h1>🔒VIP Panel <span style="font-size: smaller;">${panelVersion}</span> 💦</h1>
 		<div class="form-container">
             <h2>FRAGMENT SETTINGS ⚙️</h2>
 			<form id="configForm">
@@ -2160,10 +2160,10 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
                             </div>
                         </td>
 						<td>
-                            <button onclick="openQR('https://${hostName}/sub/${userID}#BPB-Normal', 'Normal Subscription')" style="margin-bottom: 8px;">
+                            <button onclick="openQR('https://${hostName}/sub/${userID}#🔒VIP-Normal', 'Normal Subscription')" style="margin-bottom: 8px;">
                                 QR Code&nbsp;<span class="material-symbols-outlined">qr_code</span>
                             </button>
-                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}#BPB-Normal', false)">
+                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}#🔒VIP-Normal', false)">
                                 Copy Sub<span class="material-symbols-outlined">format_list_bulleted</span>
                             </button>
                         </td>
@@ -2180,7 +2180,7 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
                             </div>
                         </td>
 						<td>
-                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}?app=singbox#BPB-Normal', false)">
+                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}?app=singbox#🔒VIP-Normal', false)">
                                 Copy Sub<span class="material-symbols-outlined">format_list_bulleted</span>
                             </button>
 						</td>
@@ -2193,10 +2193,10 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
                             </div>
                         </td>
                         <td>
-                            <button onclick="openQR('sing-box://import-remote-profile?url=https://${hostName}/sub/${userID}?app=sfa#BPB-Normal', 'Normal Subscription')" style="margin-bottom: 8px;">
+                            <button onclick="openQR('sing-box://import-remote-profile?url=https://${hostName}/sub/${userID}?app=sfa#🔒VIP-Normal', 'Normal Subscription')" style="margin-bottom: 8px;">
                                 QR Code&nbsp;<span class="material-symbols-outlined">qr_code</span>
                             </button>
-                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}?app=sfa#BPB-Normal', false)">
+                            <button onclick="copyToClipboard('https://${hostName}/sub/${userID}?app=sfa#🔒VIP-Normal', false)">
                                 Copy Sub<span class="material-symbols-outlined">format_list_bulleted</span>
                             </button>
                         </td>
@@ -2230,10 +2230,10 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
                             </div>
                         </td>
                         <td>
-                            <button onclick="openQR('https://${hostName}/fragsub/${userID}#BPB Fragment', 'Fragment Subscription')" style="margin-bottom: 8px;">
+                            <button onclick="openQR('https://${hostName}/fragsub/${userID}#🔒VIP Fragment', 'Fragment Subscription')" style="margin-bottom: 8px;">
                                 QR Code&nbsp;<span class="material-symbols-outlined">qr_code</span>
                             </button>
-                            <button onclick="copyToClipboard('https://${hostName}/fragsub/${userID}#BPB Fragment', true)">
+                            <button onclick="copyToClipboard('https://${hostName}/fragsub/${userID}#🔒VIP Fragment', true)">
                                 Copy Sub<span class="material-symbols-outlined">format_list_bulleted</span>
                             </button>
                         </td>
@@ -2267,10 +2267,10 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
                             </div>
                         </td>
 						<td>
-                            <button onclick="openQR('https://${hostName}/warpsub/${userID}#BPB-Warp', 'Warp Subscription')" style="margin-bottom: 8px;">
+                            <button onclick="openQR('https://${hostName}/warpsub/${userID}#🔒VIP-Warp', 'Warp Subscription')" style="margin-bottom: 8px;">
                                 QR Code&nbsp;<span class="material-symbols-outlined">qr_code</span>
                             </button>
-                            <button onclick="copyToClipboard('https://${hostName}/warpsub/${userID}#BPB-Warp', false)">
+                            <button onclick="copyToClipboard('https://${hostName}/warpsub/${userID}#🔒VIP-Warp', false)">
                                 Copy Sub<span class="material-symbols-outlined">format_list_bulleted</span>
                             </button>
                         </td>
@@ -2287,10 +2287,10 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
                             </div>
                         </td>
 						<td>
-                            <button onclick="openQR('sing-box://import-remote-profile?url=https://${hostName}/warpsub/${userID}?app=singbox#BPB-Warp', 'Warp Subscription')" style="margin-bottom: 8px;">
+                            <button onclick="openQR('sing-box://import-remote-profile?url=https://${hostName}/warpsub/${userID}?app=singbox#🔒VIP-Warp', 'Warp Subscription')" style="margin-bottom: 8px;">
                                 QR Code&nbsp;<span class="material-symbols-outlined">qr_code</span>
                             </button>
-                            <button onclick="copyToClipboard('https://${hostName}/warpsub/${userID}?app=singbox#BPB-Warp', false)">
+                            <button onclick="copyToClipboard('https://${hostName}/warpsub/${userID}?app=singbox#🔒VIP-Warp', false)">
                                 Copy Sub<span class="material-symbols-outlined">format_list_bulleted</span>
                             </button>
 						</td>
@@ -2337,7 +2337,7 @@ const renderHomePage = async (env, hostName, fragConfigs) => {
             <hr>
             <div class="footer">
                 <i class="fa fa-github" style="font-size:36px; margin-right: 10px;"></i>
-                <a class="link" href="https://github.com/bia-pain-bache/BPB-Worker-Panel" target="_blank">Github</a>
+                <a class="link" href="https://github.com/bia-pain-bache/🔒VIP-Worker-Panel" target="_blank">Github</a>
                 <button id="openModalBtn" class="button">Change Password</button>
                 <button type="button" id="logout" style="background: none; margin: 0; border: none; cursor: pointer;">
                     <i class="fa fa-power-off fa-2x" aria-hidden="true"></i>
@@ -2691,7 +2691,7 @@ const renderLoginPage = async () => {
     </head>
     <body>
         <div class="container">
-            <h1>BPB Panel <span style="font-size: smaller;">${panelVersion}</span> 💦</h1>
+            <h1>🔒VIP Panel <span style="font-size: smaller;">${panelVersion}</span> 💦</h1>
             <div class="form-container">
                 <h2>User Login</h2>
                 <form id="loginForm">
@@ -2762,10 +2762,10 @@ const renderErrorPage = (message, error, refer) => {
 
     <body>
         <div id="error-container">
-            <h1>BPB Panel <span style="font-size: smaller;">${panelVersion}</span> 💦</h1>
+            <h1>🔒VIP Panel <span style="font-size: smaller;">${panelVersion}</span> 💦</h1>
             <div id="error-message">
                 <h2>${message} ${refer 
-                    ? 'Please try again or refer to <a href="https://github.com/bia-pain-bache/BPB-Worker-Panel/blob/main/README.md">documents</a>' 
+                    ? 'Please try again or refer to <a href="https://github.com/bia-pain-bache/🔒VIP-Worker-Panel/blob/main/README.md">documents</a>' 
                     : ''}
                 </h2>
                 <p><b>${error ? `⚠️ ${error}` : ''}</b></p>
