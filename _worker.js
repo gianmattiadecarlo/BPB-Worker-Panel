@@ -825,18 +825,18 @@ const generateRemark = (index, port) => {
     switch (index) {
         case 0:
         case 1:
-            remark = `💦 BPB - Domain_${index + 1} : ${port}`;
+            remark = `🔒 VIP - Domain_${index + 1} : ${port}`;
             break;
         case 2:
         case 3:
-            remark = `💦 BPB - IPv4_${index - 1} : ${port}`;
+            remark = `🔒 VIP - IPv4_${index - 1} : ${port}`;
             break;
         case 4:
         case 5:
-            remark = `💦 BPB - IPv6_${index - 3} : ${port}`;
+            remark = `🔒 VIP - IPv6_${index - 3} : ${port}`;
             break;
         default:
-            remark = `💦 BPB - Clean IP_${index - 5} : ${port}`;
+            remark = `🔒 VIP - Clean IP_${index - 5} : ${port}`;
             break;
     }
 
@@ -968,7 +968,7 @@ const buildWorkerLessConfig = async (env, client) => {
     fakeOutbound.tag = 'fake-outbound';
 
     let fragConfig = structuredClone(xrayConfigTemp);
-    fragConfig.remarks  = '💦 BPB Frag - WorkerLess ⭐'
+    fragConfig.remarks  = '🔒 VIP Frag - WorkerLess ⭐'
     fragConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn, true);
     fragConfig.outbounds[0].settings.domainStrategy = 'UseIP';
     fragConfig.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
@@ -1110,7 +1110,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
     };
 
     let bestPing = structuredClone(xrayConfigTemp);
-    bestPing.remarks = '💦 BPB Frag - Best Ping 💥';
+    bestPing.remarks = '🔒 VIP Frag - Best Ping 💥';
     bestPing.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     bestPing.outbounds[0].settings.fragment.length = `${lengthMin}-${lengthMax}`;
     bestPing.outbounds[0].settings.fragment.interval = `${intervalMin}-${intervalMax}`;
@@ -1131,7 +1131,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
     }
 
     let bestFragment = structuredClone(xrayConfigTemp);
-    bestFragment.remarks = '💦 BPB Frag - Best Fragment 😎';
+    bestFragment.remarks = '🔒 VIP Frag - Best Fragment 😎';
     bestFragment.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     bestFragment.outbounds.splice(0,1);
     bestFragValues.forEach( (fragLength, index) => {
@@ -1254,14 +1254,14 @@ const getWarpConfigs = async (env, client) => {
     const {xray: xrayWoWOutbounds, singbox: singboxWoWOutbounds} = await buildWoWOutbounds(remoteDNS, localDNS, blockAds, bypassIran, blockPorn, bypassLAN, wowEndpoint); 
     
     singboxWarpConfig.outbounds[0].outbounds = ['💦 Warp Best Ping 🚀'];
-    singboxWarpConfig.outbounds[1].tag = '💦 Warp Best Ping 🚀';
+    singboxWarpConfig.outbounds[1].tag = '🔒 VIP Best Ping 🚀';
     xrayWarpConfig.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     xrayWarpConfig.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, false);
     xrayWarpConfig.outbounds.splice(0,1);
     xrayWarpConfig.routing.rules[xrayWarpConfig.routing.rules.length - 1].outboundTag = 'warp';
     delete xrayWarpConfig.observatory;
     delete xrayWarpConfig.routing.balancers;
-    xrayWarpBestPing.remarks = '💦 BPB - Warp Best Ping 🚀'
+    xrayWarpBestPing.remarks = '🔒 VIP - Warp Best Ping 🚀'
     xrayWarpBestPing.dns = await buildDNSObject(remoteDNS, localDNS, blockAds, bypassIran, blockPorn);
     xrayWarpBestPing.routing.rules = buildRoutingRules(localDNS, blockAds, bypassIran, blockPorn, bypassLAN, false, true);
     xrayWarpBestPing.outbounds.splice(0,1);
@@ -1276,7 +1276,7 @@ const getWarpConfigs = async (env, client) => {
     xrayWarpOutbounds.forEach((outbound, index) => {
         xrayWarpConfigs.push({
             ...xrayWarpConfig,
-            remarks: `💦 BPB - Warp ${index + 1} 🇮🇷`,
+            remarks: `🔒 VIP - Warp ${index + 1} 🇮🇷`,
             outbounds: [{...outbound, tag: 'warp'}, ...xrayWarpConfig.outbounds]
         });
     });
@@ -1284,7 +1284,7 @@ const getWarpConfigs = async (env, client) => {
     xrayWoWOutbounds.forEach((outbound, index) => {
         if (outbound.tag.includes('warp-out')) {
             let xrayWoWConfig = structuredClone(xrayWoWConfigTemp);
-            xrayWoWConfig.remarks = `💦 BPB - WoW ${index/2 + 1} 🌍`;
+            xrayWoWConfig.remarks = `🔒 VIP - WoW ${index/2 + 1} 🌍`;
             xrayWoWConfig.outbounds = [{...xrayWoWOutbounds[index]}, {...xrayWoWOutbounds[index + 1]}, ...xrayWoWConfig.outbounds];
             xrayWoWConfig.routing.rules[xrayWoWConfig.routing.rules.length - 1].outboundTag = outbound.tag;
             xrayWarpConfigs.push(xrayWoWConfig);
